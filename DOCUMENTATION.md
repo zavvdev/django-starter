@@ -154,4 +154,5 @@ The `setdefault` in those files is just a fallback — it only applies if `DJANG
 
 ### 10. Configure Docker
 
-Check contents of the `Dockerfile`, `docker-compose.dev.yml` and `docker-compose.prod.yml`.
+Create `Dockerfile`, `docker-compose.dev.yml` and `docker-compose.prod.yml`. Check the contents of
+these files in this repository.

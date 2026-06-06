@@ -1,0 +1,3 @@
+# Django Starter Project
+
+[DOCUMENTATION](./DOCUMENTATION.md), [PYTHON_SETUP](./PYTHON_SETUP.md)
