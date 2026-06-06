@@ -99,6 +99,8 @@ DB_USER=myuser
 DB_PASSWORD=mypassword
 DB_HOST=db
 DB_PORT=5432
+
+DJANGO_SETTINGS_MODULE=config.settings.dev
 ```
 
 **`.env.prod`**
@@ -112,6 +114,8 @@ DB_USER=myuser
 DB_PASSWORD=very-strong-password-here
 DB_HOST=db
 DB_PORT=5432
+
+DJANGO_SETTINGS_MODULE=config.settings.prod
 ```
 
 **`.gitignore`** — never commit secrets:
@@ -131,6 +135,22 @@ Create:
 Also create: `app/myproject/settings/__init__.py` which should be empty.
 
 Check contents of these files in this project.
+
+Update this line in manage.py, asgi.py and wsgi.py:
+
+```python
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+```
+
+to: 
+
+```python
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
+```
+
+since we split out config by envs.
+
+The `setdefault` in those files is just a fallback — it only applies if `DJANGO_SETTINGS_MODULE` is not already set in the environment. Since we're setting it in your our .env files, Docker will inject it into the container and the `setdefault` line will be ignored.
 
 ### 10. Configure Docker
 
