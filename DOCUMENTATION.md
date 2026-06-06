@@ -15,13 +15,19 @@ time when:
 
 - Running `django-admin` or `manage.py` locally
 
-- Installing new packages with `pip`
+- Installing new packages with `pip` locally
 
 - Using any local tooling like linters, formatters
 
 Docker has its own isolated environment for packages.
 
-NOTE: Check [Makefile](./Makefile) in order to see how to automate venv activation process.
+Create `Makefile` and add next:
+```Makefile
+setup:
+	python -m venv .venv
+```
+
+This will allow you to create venv using `make setup` command.
 
 3. Run `pip install django django-environ` in order to install [Django
 Framework](https://www.djangoproject.com/) and
@@ -34,3 +40,34 @@ folder inside you project folder which will include `manage.py` file and `config
   starting dev server.
 
 - `config/` - Django's configurations
+
+5. Create `requirements/` folder inside the project root with three files: `base.txt`, `dev.txt` and
+`prod.txt`. These files are just lists of dependencies needed for your project.
+
+`base.txt`:
+
+```
+Django>=6.0.6
+django-environ>=0.13.0
+psycopg2>=2.9.12
+```
+
+`psycopg2` - PostgreSQL database adapter
+
+`dev.txt`:
+
+```
+-r base.txt
+django-debug-toolbar
+```
+
+`django-debug-toolbar` - debugging panel that appears in your browser while developing.
+
+`prod.txt`:
+
+```
+-r base.txt
+gunicorn>=21.0
+```
+
+[gunicorn](https://gunicorn.org/) - is a production-ready Python web server. It acts as the bridge between your web application (such as Django, Flask, or FastAPI) and a reverse proxy server (like Nginx). While built-in development servers handle local testing, they crash under heavy traffic. Gunicorn provides the necessary stability, concurrency, and performance needed to run live web applications.
