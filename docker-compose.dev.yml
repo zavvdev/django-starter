@@ -1,0 +1,47 @@
+# Defines all the containers that will run together.
+# Each item under it is a separate container.
+services:
+  db:
+    image: postgres:18
+    # Injects all variables from .env.dev into the container's environment.
+    env_file:
+      - .env.dev
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    # Persists the database data. Without this, every time you restart
+    # the container your database would be wiped.
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    # Maps your local port 5432 to port 5432 inside the container.
+    # Format is host:container. This lets you connect to the database
+    # from your machine using a tool like TablePlus or pgAdmin.
+    ports:
+      - "5432:5432"
+
+  web:
+    build:
+      # Docker builds from the current directory, so it can find the Dockerfile.
+      context: .
+      # Uses the dev stage from multi-stage Dockerfile, so only dev dependencies are installed.
+      target: dev
+    command: python manage.py runserver 0.0.0.0:8000
+    # Mounts local app/ folder into the container's /app.
+    # This means that local code changes are instantly reflected inside
+    # the container without rebuilding — hot reload works because of this.
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.dev
+    # Start the db container before web.
+    # This only waits for the container to start, not for Postgres to be fully ready.
+    depends_on:
+      - db
+
+# Declares the named volume at the top level so Docker creates and manages it.
+# Without this declaration Docker would throw an error when it sees postgres_data_dev referenced above.
+volumes:
+  postgres_data_dev:

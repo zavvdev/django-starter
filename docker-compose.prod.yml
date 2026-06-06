@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:18
+    env_file:
+      - .env.prod
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    # Automatically restarts the container if it crashes or the server reboots.
+    restart: always
+
+  web:
+    build:
+      context: .
+      target: prod
+    # Replaces Django's dev server with Gunicorn for production.
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    volumes:
+      - ./app:/app
+      - static_volume:/app/staticfiles
+    env_file:
+      - .env.prod
+    depends_on:
+      - db
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/app/staticfiles
+    # Only Nginx exposes ports in production — not web or db.
+    # Port 80 is HTTP, 443 is HTTPS. All public traffic goes through
+    # Nginx first, then Nginx forwards it to Gunicorn internally.
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    restart: always
+
+volumes:
+  postgres_data_prod:
+  static_volume:

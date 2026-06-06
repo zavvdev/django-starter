@@ -2,15 +2,23 @@
 
 ## Installation
 
-1. In order to start Django project, you first need to have [Python](https://www.python.org/),
+### 1. Install Python and Pip
+
+In order to start Django project, you first need to have [Python](https://www.python.org/),
 [Pip](https://pypi.org/project/pip/) and [Docker](https://www.docker.com/) installed in your system.
 For setting up Python follow [this](./PYTHON_SETUP.md) steps.
 
-2. Create a directory for your project: `mkdir django-starter && cd django-starter`.
+### 2. Create an empty directory for the project
 
-3. Create a [virtual environment](https://docs.python.org/3/library/venv.html): `python -m venv .venv`.
+Create a directory for your project: `mkdir django-starter && cd django-starter`.
 
-4. Activate it: `source .venv/bin/activate`. You need to activate your virtual environment every
+### 3. Create a virtual environment
+
+Create a [virtual environment](https://docs.python.org/3/library/venv.html): `python -m venv .venv`.
+
+### 4. Activate virtual environment
+
+Activate it: `source .venv/bin/activate`. You need to activate your virtual environment every
 time when:
 
 - Running `django-admin` or `manage.py` locally
@@ -29,11 +37,15 @@ setup:
 
 This will allow you to create venv using `make setup` command.
 
-3. Run `pip install django django-environ` in order to install [Django
+### 5. Install Django
+
+Run `pip install django django-environ` in order to install [Django
 Framework](https://www.djangoproject.com/) and
 [django-environ](https://django-environ.readthedocs.io/en/latest/) into the virtual environment.
 
-4. Run `django-admin startproject config app` in order to setup your project. It will create `app/`
+### 6. Create a project
+
+Run `django-admin startproject config app` in order to setup your project. It will create `app/`
 folder inside you project folder which will include `manage.py` file and `config/` folder.
 
 - `manage.py` - Django's command-line utility for administrative tasks like running migrations or
@@ -41,7 +53,9 @@ folder inside you project folder which will include `manage.py` file and `config
 
 - `config/` - Django's configurations
 
-5. Create `requirements/` folder inside the project root with three files: `base.txt`, `dev.txt` and
+### 7. Create requirements lists
+
+Create `requirements/` folder inside the project root with three files: `base.txt`, `dev.txt` and
 `prod.txt`. These files are just lists of dependencies needed for your project.
 
 `base.txt`:
@@ -71,3 +85,53 @@ gunicorn>=21.0
 ```
 
 [gunicorn](https://gunicorn.org/) - is a production-ready Python web server. It acts as the bridge between your web application (such as Django, Flask, or FastAPI) and a reverse proxy server (like Nginx). While built-in development servers handle local testing, they crash under heavy traffic. Gunicorn provides the necessary stability, concurrency, and performance needed to run live web applications.
+
+### 8. Create env variables
+
+**`.env.dev`**
+```ini
+DEBUG=True
+SECRET_KEY=your-dev-secret-key-here
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+DB_NAME=mydb_dev
+DB_USER=myuser
+DB_PASSWORD=mypassword
+DB_HOST=db
+DB_PORT=5432
+```
+
+**`.env.prod`**
+```ini
+DEBUG=False
+SECRET_KEY=your-strong-production-secret-key-here
+ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+
+DB_NAME=mydb_prod
+DB_USER=myuser
+DB_PASSWORD=very-strong-password-here
+DB_HOST=db
+DB_PORT=5432
+```
+
+**`.gitignore`** — never commit secrets:
+```
+.env.dev
+.env.prod
+```
+
+### 9. Django settings
+
+Create:
+
+`app/config/settings/base.py`,
+`app/config/settings/dev.py`,
+`app/config/settings/prod.py`,
+
+Also create: `app/myproject/settings/__init__.py` which should be empty.
+
+Check contents of these files in this project.
+
+### 10. Configure Docker
+
+Check contents of the `Dockerfile`, `docker-compose.dev.yml` and `docker-compose.prod.yml`.
