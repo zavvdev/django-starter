@@ -34,21 +34,49 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 # Application definition
 
 INSTALLED_APPS = [
+    # Admin web UI at /admin.
     "django.contrib.admin",
+
+    # Core authentication framework and its default models.
     "django.contrib.auth",
+    
+    # Django content type system (allows permissions to be associated with models).
     "django.contrib.contenttypes",
+
+    # Session-based auth (cookies).
     "django.contrib.sessions",
+
+    # django.contrib.messages is Django’s built-in framework for displaying one-time
+    # notification messages (often called "flash messages"). It allows you to
+    # temporarily store a message in a user's session during one request and
+    # display it on the immediately subsequent request—such as a "Login successful"
+    # or "Form submitted" notification.
     "django.contrib.messages",
+
+    # Serves CSS/JS/images.
     "django.contrib.staticfiles",
 ]
 
 MIDDLEWARE = [
+    # HTTPS redirects, security headers.
     "django.middleware.security.SecurityMiddleware",
+
+    # Manages sessions across requests.
     "django.contrib.sessions.middleware.SessionMiddleware",
+
+    # URL normalization (trailing slashes).
     "django.middleware.common.CommonMiddleware",
+
+    # CSRF protection for forms.
     "django.middleware.csrf.CsrfViewMiddleware",
+
+    # Associates users with requests using sessions.
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+    # Flash messages.
     "django.contrib.messages.middleware.MessageMiddleware",
+
+    # Prevents clickjacking via iframes.
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
