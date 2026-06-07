@@ -30,8 +30,8 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # Tells browsers to always use HTTPS for your site and never HTTP. Once a browser sees this header
 # it will refuse to connect over HTTP for the duration you specify.
 # 31536000 = 1 year in seconds.
-# One important warning — HSTS is hard to undo. Once a browser caches it, it will refuse HTTP connections
-# for the full year. 
+# One important warning — HSTS is hard to undo. Once a browser caches it, it will refuse
+# HTTP connections for the full year.
 # Never enable it before you have HTTPS properly working
 # Start with a small value like 3600 (1 hour) to test first
 # Only bump it to 31536000 when you're confident everything works.

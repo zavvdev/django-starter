@@ -2,6 +2,12 @@
 setup:
 	python -m venv .venv
 
+lint:
+	docker compose -f docker-compose.dev.yml exec web ruff check . --fix
+
+format:
+	docker compose -f docker-compose.dev.yml exec web ruff format .
+
 # ========================
 # DEV
 # ========================
