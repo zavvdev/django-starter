@@ -45,13 +45,19 @@ Framework](https://www.djangoproject.com/) and
 
 ### 6. Create a project
 
-Run `django-admin startproject config app` in order to setup your project. It will create `app/`
+Run `django-admin startproject config src` in order to setup your project. It will create `src/`
 folder inside you project folder which will include `manage.py` file and `config/` folder.
 
 - `manage.py` - Django's command-line utility for administrative tasks like running migrations or
   starting dev server.
 
 - `config/` - Django's configurations
+
+The syntax is:
+
+```
+django-admin startproject <project_name> <destination_folder>
+```
 
 ### 7. Create requirements lists
 
@@ -94,13 +100,17 @@ DEBUG=True
 SECRET_KEY=your-dev-secret-key-here
 ALLOWED_HOSTS=localhost,127.0.0.1
 
-DB_NAME=mydb_dev
-DB_USER=myuser
-DB_PASSWORD=mypassword
-DB_HOST=db
-DB_PORT=5432
+POSTGRES_DB=mydb_dev
+POSTGRES_USER=myuser
+POSTGRES_PASSWORD=mypasswd
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 
 DJANGO_SETTINGS_MODULE=config.settings.dev
+
+DJANGO_SUPERUSER_USERNAME=admin
+DJANGO_SUPERUSER_EMAIL=admin@example.com
+DJANGO_SUPERUSER_PASSWORD=admin
 ```
 
 **`.env.prod`**
@@ -109,14 +119,19 @@ DEBUG=False
 SECRET_KEY=your-strong-production-secret-key-here
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
 
-DB_NAME=mydb_prod
-DB_USER=myuser
-DB_PASSWORD=very-strong-password-here
-DB_HOST=db
-DB_PORT=5432
+POSTGRES_DB=mydb_prod
+POSTGRES_USER=myuser
+POSTGRES_PASSWORD=mypasswd
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 
 DJANGO_SETTINGS_MODULE=config.settings.prod
 ```
+
+Variables in .env files for Postgres should match names of the variables that Postgres
+container expects.
+
+Variables for superuser will be automatically used when our `web` service starts.
 
 **`.gitignore`** — never commit secrets:
 ```
@@ -128,11 +143,11 @@ DJANGO_SETTINGS_MODULE=config.settings.prod
 
 Create:
 
-`app/config/settings/base.py`,
-`app/config/settings/dev.py`,
-`app/config/settings/prod.py`,
+`src/config/settings/base.py`,
+`src/config/settings/dev.py`,
+`src/config/settings/prod.py`,
 
-Also create: `app/myproject/settings/__init__.py` which should be empty.
+Also create: `src/myproject/settings/__init__.py` which should be empty.
 
 Check contents of these files in this project.
 
@@ -156,3 +171,22 @@ The `setdefault` in those files is just a fallback — it only applies if `DJANG
 
 Create `Dockerfile`, `docker-compose.dev.yml` and `docker-compose.prod.yml`. Check the contents of
 these files in this repository.
+
+### 11. Add basic Nginx setup
+
+Why using Nginx with Gunicorn?
+Nginx has some web server functionality (e.g., serving static pages; SSL handling) that gunicorn does not, whereas gunicorn implements WSGI (which nginx does not).
+
+Make sure you have this line in your `src/config/settings/base.py`:
+
+```python
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+```
+
+It's the local folder where `collectstatic` dumps everything for Web Server to serve.
+
+Create `nginx/nginx.conf` file. Check the contents of this file in this repo.
+
+### 12. Update Makefile
+
+Check `Makefile` in this repo.

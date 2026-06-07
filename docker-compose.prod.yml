@@ -1,16 +1,21 @@
 services:
+  # We don't expose DB ports like in dev config for security reasons.
+  # Only web container can reach it internally via Docker network.
+  # If you need to expose ports temporarily for dev purposes,
+  # expose them here but do not forget to remove them after.
   db:
-    image: postgres:18
+    image: postgres:16
     env_file:
       - .env.prod
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data_prod:/var/lib/postgresql/data
     # Automatically restarts the container if it crashes or the server reboots.
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   web:
     build:
@@ -19,12 +24,13 @@ services:
     # Replaces Django's dev server with Gunicorn for production.
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
     volumes:
-      - ./app:/app
+      - ./src:/app
       - static_volume:/app/staticfiles
     env_file:
       - .env.prod
     depends_on:
-      - db
+      db:
+        condition: service_healthy  # wait until healthcheck passes
     restart: always
 
   nginx:

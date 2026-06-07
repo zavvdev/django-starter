@@ -30,7 +30,7 @@ FROM base AS dev
 RUN pip install --no-cache-dir -r requirements/dev.txt
 
 # =================
-# DEV STAGE
+# PROD STAGE
 # =================
 
 FROM base AS prod
